@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import { Button } from "@/components/ui/button"
 import {
+  Button,
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { TooltipProvider } from "@/components/ui/tooltip"
+  TooltipProvider,
+} from "@component-template/react"
+
+import { AppSidebar } from "@/components/app-sidebar"
 
 type Variant = "sidebar" | "floating" | "inset"
 type Collapsible = "offcanvas" | "icon" | "none"

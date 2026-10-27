@@ -5,7 +5,9 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@component-template/react": ["../../packages/react/src/index.ts"],
+      "@component-template/react/*": ["../../packages/react/src/*"]
     }
   },
   "include": ["src"]

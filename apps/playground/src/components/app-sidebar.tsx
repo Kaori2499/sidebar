@@ -20,7 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@component-template/react"
 
 const navItems = [
   { title: "Home", url: "#home", icon: Home },
