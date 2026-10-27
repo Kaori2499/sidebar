@@ -20,7 +20,7 @@
   },
   "registries": {
     "@sidebar": {
-      "url": "https://raw.githubusercontent.com/Kaori2499/sidebar/main/public/r/{name}.json"
+      "url": "https://kaori2499.github.io/sidebar/r/{name}.json"
     }
   }
 }

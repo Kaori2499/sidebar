@@ -1,13 +1,10 @@
 # sidebar
 
 <p align="center">
-  <video
-    src="./apps/playground/public/zen_6YS9A1YMix.mp4"
+  <img
+    src="./apps/playground/public/zen_6YS9A1YMix.png"
+    alt="Sidebar playground with variant controls and an expanded peek sidebar"
     width="920"
-    autoplay
-    muted
-    loop
-    playsinline
   />
 </p>
 
@@ -31,11 +28,11 @@ bunx --bun shadcn@latest add @sidebar/sidebar
 bunx --bun shadcn@latest add @sidebar/sidebar-playground
 ```
 
-(`@sidebar` → `https://raw.githubusercontent.com/Kaori2499/sidebar/main/public/r/{name}.json` in this repo’s `components.json`.)
+(`@sidebar` → `https://kaori2499.github.io/sidebar/r/{name}.json` in this repo’s `components.json`.)
 
 ## Usage
 
-**Registry playground block** (matches the video above):
+**Registry playground block** (matches the preview above):
 
 ```tsx
 import { SidebarPlaygroundDemo } from "@/components/blocks/sidebar-playground/sidebar-playground"
@@ -115,7 +112,7 @@ bun run test:e2e     # bunx playwright install chromium once
 
 ```bash
 bun run registry:sync      # packages/react + playground → registry/
-bun run registry:build     # sync + public/r/*.json for distribution
+bun run registry:build     # sync + apps/playground/public/r/*.json for Pages
 bun run registry:validate
 ```
 
