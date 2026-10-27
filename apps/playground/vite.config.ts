@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const reactPkg = path.resolve(__dirname, "../../packages/react")
 
 export default defineConfig({
+  // GitHub project Pages: https://kaori2499.github.io/sidebar/
+  base: "/sidebar/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

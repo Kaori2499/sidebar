@@ -9,12 +9,13 @@
   "scripts": {
     "dev": "bun run --filter playground dev",
     "build": "bun run --filter @component-template/react build",
+    "build:playground": "bun run --filter playground build",
     "typecheck": "bun run --filter @component-template/react typecheck && bun run --filter playground typecheck",
     "test": "bun run test:e2e",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "registry:sync": "node scripts/sync-registry.mjs",
-    "registry:build": "node scripts/sync-registry.mjs && bunx --bun shadcn@latest build registry.json --output public/r",
+    "registry:build": "node scripts/sync-registry.mjs && bunx --bun shadcn@latest build registry.json --output apps/playground/public/r",
     "registry:validate": "bunx --bun shadcn@latest registry validate registry.json"
   },
   "devDependencies": {
