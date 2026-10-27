@@ -4,25 +4,32 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders default and primary buttons", async ({ page }) => {
-  await expect(page.getByTestId("button-default")).toBeVisible();
-  await expect(page.getByTestId("button-default")).toHaveText("Default");
-  await expect(page.getByTestId("button-primary")).toBeVisible();
-  await expect(page.getByTestId("button-primary")).toHaveAttribute(
-    "data-variant",
-    "primary",
+test("renders sidebar nav and trigger", async ({ page }) => {
+  await expect(page.getByTestId("sidebar-trigger")).toBeVisible();
+  await expect(page.getByTestId("nav-home")).toBeVisible();
+  await expect(page.getByTestId("active-config")).toContainText("variant=sidebar");
+});
+
+test("can switch sidebar variant", async ({ page }) => {
+  await page.getByTestId("control-variant-floating").click();
+  await expect(page.getByTestId("active-config")).toContainText(
+    "variant=floating",
   );
+  await expect(page.getByTestId("nav-home")).toBeVisible();
+  await expect(page.getByTestId("sidebar-trigger")).toBeVisible();
+
+  await page.getByTestId("control-variant-inset").click();
+  await expect(page.getByTestId("active-config")).toContainText("variant=inset");
+  await expect(page.getByTestId("sidebar-inset")).toBeVisible();
 });
 
-test("disabled button is not clickable", async ({ page }) => {
-  const disabled = page.getByTestId("button-disabled");
-  await expect(disabled).toBeDisabled();
-});
+test("can switch collapsible and side", async ({ page }) => {
+  await page.getByTestId("control-collapsible-icon").click();
+  await expect(page.getByTestId("active-config")).toContainText(
+    "collapsible=icon",
+  );
 
-test("click increments counter", async ({ page }) => {
-  await expect(page.getByTestId("click-count")).toHaveText("Clicks: 0");
-  await page.getByTestId("button-clickable").click();
-  await expect(page.getByTestId("click-count")).toHaveText("Clicks: 1");
-  await page.getByTestId("button-clickable").click();
-  await expect(page.getByTestId("click-count")).toHaveText("Clicks: 2");
+  await page.getByTestId("control-side-right").click();
+  await expect(page.getByTestId("active-config")).toContainText("side=right");
+  await expect(page.getByTestId("nav-home")).toBeVisible();
 });

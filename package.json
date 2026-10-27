@@ -1,5 +1,5 @@
 {
-  "name": "component-template",
+  "name": "sidebar",
   "private": true,
   "version": "0.0.0",
   "workspaces": [
@@ -18,5 +18,5 @@
     "@playwright/test": "^1.49.0",
     "typescript": "^5.7.2"
   },
-  "description": "Bun monorepo template for a publishable React component + Vite playground + Playwright e2e"
+  "description": "Bun monorepo playground for shadcn/ui Base Sidebar with live variant controls"
 }
