@@ -23,7 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "./tooltip"
-import { PanelLeftIcon } from "lucide-react"
+import { PanelLeftIcon, PanelRightIcon } from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -40,6 +40,12 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  /** True when peek variant is collapsed and the edge hover panel is open. */
+  peekOpen: boolean
+  setPeekEnabled: (enabled: boolean) => void
+  showPeek: () => void
+  hidePeek: () => void
+  expandFromPeek: () => void
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
@@ -113,6 +119,54 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? "expanded" : "collapsed"
 
+  const [peekEnabled, setPeekEnabled] = React.useState(false)
+  const [peekHover, setPeekHover] = React.useState(false)
+  const peekTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearPeekTimer = React.useCallback(() => {
+    if (peekTimer.current != null) {
+      clearTimeout(peekTimer.current)
+      peekTimer.current = null
+    }
+  }, [])
+
+  const showPeek = React.useCallback(() => {
+    clearPeekTimer()
+    setPeekHover(true)
+  }, [clearPeekTimer])
+
+  const hidePeek = React.useCallback(() => {
+    clearPeekTimer()
+    peekTimer.current = setTimeout(() => {
+      peekTimer.current = null
+      setPeekHover(false)
+    }, 120)
+  }, [clearPeekTimer])
+
+  const expandFromPeek = React.useCallback(() => {
+    clearPeekTimer()
+    setPeekHover(false)
+    setOpen(true)
+  }, [clearPeekTimer, setOpen])
+
+  React.useEffect(() => clearPeekTimer, [clearPeekTimer])
+
+  React.useEffect(() => {
+    if (state !== "expanded") return
+    clearPeekTimer()
+    setPeekHover(false)
+  }, [state, clearPeekTimer])
+
+  React.useEffect(() => {
+    if (!peekEnabled) {
+      clearPeekTimer()
+      setPeekHover(false)
+    }
+  }, [peekEnabled, clearPeekTimer])
+
+  const peekOpen =
+    peekEnabled && peekHover && state === "collapsed" && !isMobile
+
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
       state,
@@ -122,8 +176,25 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      peekOpen,
+      setPeekEnabled,
+      showPeek,
+      hidePeek,
+      expandFromPeek,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+      peekOpen,
+      showPeek,
+      hidePeek,
+      expandFromPeek,
+    ]
   )
 
   return (
@@ -159,10 +230,28 @@ function Sidebar({
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right"
-  variant?: "sidebar" | "floating" | "inset"
+  variant?: "sidebar" | "floating" | "inset" | "peek"
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const {
+    isMobile,
+    state,
+    openMobile,
+    setOpenMobile,
+    peekOpen,
+    setPeekEnabled,
+    showPeek,
+    hidePeek,
+    expandFromPeek,
+  } = useSidebar()
+  const isPeekVariant = variant === "peek"
+
+  React.useEffect(() => {
+    setPeekEnabled(isPeekVariant)
+    return () => setPeekEnabled(false)
+  }, [isPeekVariant, setPeekEnabled])
+
+  const edgeCollapsed = isPeekVariant && state === "collapsed" && !isMobile
 
   if (collapsible === "none") {
     return (
@@ -212,14 +301,21 @@ function Sidebar({
       data-collapsible={state === "collapsed" ? collapsible : ""}
       data-variant={variant}
       data-side={side}
+      data-peek={peekOpen ? "true" : "false"}
       data-slot="sidebar"
+      onPointerEnter={edgeCollapsed ? showPeek : undefined}
+      onPointerLeave={edgeCollapsed ? hidePeek : undefined}
     >
       {/* This is what handles the sidebar gap on desktop */}
       <div
         data-slot="sidebar-gap"
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+          "relative w-(--sidebar-width) bg-transparent",
+          isPeekVariant
+            ? "transition-[width] duration-300 ease-[cubic-bezier(0.165,0.84,0.44,1)]"
+            : "transition-[width] duration-200 ease-linear",
           "group-data-[collapsible=offcanvas]:w-0",
+          "group-data-[variant=peek]:group-data-[state=collapsed]:w-0",
           "group-data-[side=right]:rotate-180",
           variant === "floating" || variant === "inset"
             ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
@@ -229,8 +325,12 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         data-side={side}
+        data-peek={peekOpen ? "true" : "false"}
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=left]:left-0 data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] data-[side=right]:right-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] md:flex",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) data-[side=left]:left-0 data-[side=right]:right-0 md:flex",
+          isPeekVariant
+            ? "transition-transform duration-300 ease-[cubic-bezier(0.165,0.84,0.44,1)] data-[side=left]:group-data-[variant=peek]:group-data-[state=collapsed]:data-[peek=false]:-translate-x-full data-[side=right]:group-data-[variant=peek]:group-data-[state=collapsed]:data-[peek=false]:translate-x-full group-data-[variant=peek]:group-data-[state=collapsed]:data-[peek=false]:pointer-events-none group-data-[variant=peek]:group-data-[state=collapsed]:data-[peek=true]:pointer-events-auto group-data-[variant=peek]:group-data-[state=collapsed]:data-[peek=true]:z-30"
+            : "transition-[left,right,width] duration-200 ease-linear data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -247,6 +347,32 @@ function Sidebar({
           {children}
         </div>
       </div>
+      {edgeCollapsed && (
+        <>
+          <div
+            aria-hidden
+            data-slot="sidebar-edge"
+            className={cn(
+              "fixed inset-y-0 z-20 w-4",
+              side === "left" ? "left-0" : "right-0"
+            )}
+            onPointerEnter={showPeek}
+          />
+          <Button
+            data-slot="sidebar-expand"
+            variant="outline"
+            size="icon-sm"
+            className={cn(
+              "fixed top-3 z-40 bg-background shadow-sm",
+              side === "left" ? "left-3" : "right-3"
+            )}
+            onClick={expandFromPeek}
+          >
+            {side === "left" ? <PanelLeftIcon /> : <PanelRightIcon />}
+            <span className="sr-only">Expand Sidebar</span>
+          </Button>
+        </>
+      )}
     </div>
   )
 }
@@ -293,6 +419,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
         "group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar",
+        "group-data-[variant=peek]:hidden",
         "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
         "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className

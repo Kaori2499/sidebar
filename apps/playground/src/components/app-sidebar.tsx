@@ -1,107 +1,17 @@
-import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  GalleryVerticalEnd,
-  UserRound,
-} from "lucide-react"
+import { Sidebar, SidebarHeader } from "@component-template/react"
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@component-template/react"
+import { AnimatedSidebarTrigger } from "@/components/animated-sidebar-trigger"
+import { usePlayground } from "@/playground"
 
-const navItems = [
-  { title: "Home", url: "#home", icon: Home },
-  { title: "Inbox", url: "#inbox", icon: Inbox },
-  { title: "Calendar", url: "#calendar", icon: Calendar },
-  { title: "Search", url: "#search", icon: Search },
-  { title: "Settings", url: "#settings", icon: Settings },
-] as const
+export function AppSidebar() {
+  const { state } = usePlayground()
+  const { variant, collapsible } = state
 
-type AppSidebarProps = {
-  side?: "left" | "right"
-  variant?: "sidebar" | "floating" | "inset"
-  collapsible?: "offcanvas" | "icon" | "none"
-}
-
-export function AppSidebar({
-  side = "left",
-  variant = "sidebar",
-  collapsible = "offcanvas",
-}: AppSidebarProps) {
   return (
-    <Sidebar side={side} variant={variant} collapsible={collapsible}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Acme Inc">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <GalleryVerticalEnd className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Acme Inc</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Playground
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar side="left" variant={variant} collapsible={collapsible}>
+      <SidebarHeader className="h-14 shrink-0 flex-row items-center justify-end gap-0 p-0 px-4">
+        <AnimatedSidebarTrigger data-testid="sidebar-trigger" />
       </SidebarHeader>
-
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    render={<a href={item.url} />}
-                    tooltip={item.title}
-                    isActive={item.title === "Home"}
-                    data-testid={`nav-${item.title.toLowerCase()}`}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Account">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
-                <UserRound className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Kaori</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  you@example.com
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

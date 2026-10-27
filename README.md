@@ -1,54 +1,130 @@
 # sidebar
 
-Bun monorepo playground for the [shadcn/ui Base Sidebar](https://ui.shadcn.com/docs/components/base/sidebar) (Base UI + Nova). Forked from `component-template`.
+<p align="center">
+  <video
+    src="./apps/playground/public/zen_6YS9A1YMix.mp4"
+    width="920"
+    autoplay
+    muted
+    loop
+    playsinline
+  />
+</p>
 
-```
-sidebar/
-├── apps/playground/     # Vite demo + AppSidebar composition + controls
-├── packages/react/      # @component-template/react — sidebar + UI primitives
-├── e2e/                 # Playwright against the playground
-└── playwright.config.ts
-```
+Performant, fully collapsible **[shadcn/ui Base Sidebar](https://ui.shadcn.com/docs/components/base/sidebar)** (Base UI + Nova) with a **`peek`** variant: zero layout gap when collapsed, edge hover reveal via `transform`, and a shared trigger between page and sidebar headers. Install from the [shadcn registry](https://ui.shadcn.com/docs/registry) or use the monorepo package.
 
-## Commands
+**Live preview:** https://kaori2499.github.io/sidebar/
+
+## Install
 
 ```bash
-bun install
-bun run build          # packages/react -> dist/
-bun run dev            # playground -> http://127.0.0.1:5174
-bun run typecheck
-bunx playwright install chromium   # once
-bun run test:e2e
+bunx --bun shadcn@latest add kaori2499/sidebar/sidebar
+bunx --bun shadcn@latest add kaori2499/sidebar/sidebar-playground
 ```
 
-## Package
+Requires a shadcn/ui project (Tailwind v4, Base Nova tokens). The `sidebar` item installs `components/ui/sidebar.tsx` plus `button`, `sheet`, `tooltip`, `input`, `separator`, `skeleton`, `use-mobile`, and `lib/utils.ts`. The playground block adds the interactive demo (`SidebarPlaygroundDemo`), Motion shared trigger, and peek-specific CSS.
 
-UI primitives live in `packages/react` and are imported as `@component-template/react`.
+After GitHub Pages has published the registry JSON, you can also use:
 
-```ts
+```bash
+bunx --bun shadcn@latest add @sidebar/sidebar
+bunx --bun shadcn@latest add @sidebar/sidebar-playground
+```
+
+(`@sidebar` → `https://raw.githubusercontent.com/Kaori2499/sidebar/main/public/r/{name}.json` in this repo’s `components.json`.)
+
+## Usage
+
+**Registry playground block** (matches the video above):
+
+```tsx
+import { SidebarPlaygroundDemo } from "@/components/blocks/sidebar-playground/sidebar-playground"
+import "@/components/blocks/sidebar-playground/sidebar-playground.css"
+
+export function App() {
+  return <SidebarPlaygroundDemo />
+}
+```
+
+**Sidebar only** in your own layout:
+
+```tsx
+import {
+  Sidebar,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
+
+export function AppShell() {
+  return (
+    <SidebarProvider>
+      <Sidebar variant="peek" collapsible="offcanvas">
+        <SidebarTrigger />
+        {/* … */}
+      </Sidebar>
+      <SidebarInset>
+        <main>{/* … */}</main>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
+```
+
+| `variant` | Behavior |
+| --- | --- |
+| `sidebar` | Default docked panel |
+| `floating` | Inset card with shadow |
+| `inset` | Main content inset with sidebar |
+| `peek` | Fully collapsed (no gap); hover edge to slide in; `peekOpen` on `useSidebar()` |
+
+| `collapsible` | When collapsed |
+| --- | --- |
+| `offcanvas` | Panel off-screen |
+| `icon` | Icon rail |
+| `none` | Not collapsible |
+
+`variant="peek"` ignores `collapsible` for the hover/off-canvas behavior. Toggle with the trigger or **Ctrl/Cmd+B**.
+
+## npm package (optional)
+
+For the monorepo package without the CLI:
+
+```bash
+bun run build   # in this repo, or install from npm when published
+```
+
+```tsx
 import {
   Sidebar,
   SidebarProvider,
   SidebarTrigger,
-  Button,
 } from "@component-template/react"
 import "@component-template/react/styles.css"
 ```
 
-Theme tokens ship as `styles.css`. The playground CSS also `@source`s the package so Tailwind emits classes used by the primitives.
+## Develop this repo
 
-## Playground demo
+```bash
+bun install
+bun run dev          # playground at http://127.0.0.1:5174
+bun run build        # packages/react → dist/
+bun run typecheck
+bun run test:e2e     # bunx playwright install chromium once
+```
 
-`bun run dev` opens a live sidebar with header, nav groups (icons), and footer. Use the on-page controls to switch:
-
-- **variant:** `sidebar` | `floating` | `inset`
-- **collapsible:** `offcanvas` | `icon` | `none`
-- **side:** `left` | `right`
-
-Changing a control remounts `SidebarProvider` so the new props apply cleanly. Dark theme is on by default (`class="dark"` on `<html>`). Toggle with the header trigger or `Ctrl/Cmd+B`.
-
-Port **5174** is used so it does not clash with other Vite apps on this machine that already bind 5173.
+```bash
+bun run registry:sync      # packages/react + playground → registry/
+bun run registry:build     # sync + public/r/*.json for distribution
+bun run registry:validate
+```
 
 ## License
 
-MIT - see `LICENSE`.
+MIT — see [LICENSE](./LICENSE).
+
+## Credits
+
+Peek animation approach (transform instead of width/left):
+
+- [Joshua Wootonn — Sidebar animation performance](https://www.joshuawootonn.com/sidebar-animation-performance)

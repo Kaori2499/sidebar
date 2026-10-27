@@ -4,10 +4,9 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders sidebar nav and trigger", async ({ page }) => {
+test("renders sidebar trigger", async ({ page }) => {
   await expect(page.getByTestId("sidebar-trigger")).toBeVisible();
-  await expect(page.getByTestId("nav-home")).toBeVisible();
-  await expect(page.getByTestId("active-config")).toContainText("variant=sidebar");
+  await expect(page.getByTestId("active-config")).toContainText("variant=peek");
 });
 
 test("can switch sidebar variant", async ({ page }) => {
@@ -15,7 +14,6 @@ test("can switch sidebar variant", async ({ page }) => {
   await expect(page.getByTestId("active-config")).toContainText(
     "variant=floating",
   );
-  await expect(page.getByTestId("nav-home")).toBeVisible();
   await expect(page.getByTestId("sidebar-trigger")).toBeVisible();
 
   await page.getByTestId("control-variant-inset").click();
@@ -23,13 +21,28 @@ test("can switch sidebar variant", async ({ page }) => {
   await expect(page.getByTestId("sidebar-inset")).toBeVisible();
 });
 
-test("can switch collapsible and side", async ({ page }) => {
+test("peek variant peeks from the edge and expands from the corner", async ({
+  page,
+}) => {
+  await page.getByTestId("control-variant-peek").click();
+  await expect(page.getByTestId("active-config")).toContainText("variant=peek");
+
+  await page.getByTestId("sidebar-trigger").click();
+  const sidebar = page.locator("[data-slot=sidebar]");
+  await expect(sidebar).toHaveAttribute("data-state", "collapsed");
+  await expect(sidebar).toHaveAttribute("data-peek", "false");
+  await page.locator("[data-slot=sidebar-edge]").hover();
+  await expect(sidebar).toHaveAttribute("data-peek", "true");
+  await page.getByTestId("sidebar-trigger").click();
+  await expect(sidebar).toHaveAttribute("data-state", "expanded");
+  await expect(sidebar).toHaveAttribute("data-collapsible", "");
+});
+
+test("can switch collapsible", async ({ page }) => {
+  await page.getByTestId("control-variant-sidebar").click();
   await page.getByTestId("control-collapsible-icon").click();
   await expect(page.getByTestId("active-config")).toContainText(
     "collapsible=icon",
   );
-
-  await page.getByTestId("control-side-right").click();
-  await expect(page.getByTestId("active-config")).toContainText("side=right");
-  await expect(page.getByTestId("nav-home")).toBeVisible();
+  await expect(page.getByTestId("sidebar-trigger")).toBeVisible();
 });

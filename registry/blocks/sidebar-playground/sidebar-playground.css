@@ -1,0 +1,17 @@
+/* Peek variant: app header triggers replace the built-in expand control */
+[data-slot="sidebar"][data-variant="peek"] [data-slot="sidebar-expand"] {
+  display: none;
+}
+
+/* Hide the page trigger as soon as peek opens */
+[data-slot="sidebar-wrapper"]:has([data-slot="sidebar"][data-peek="true"])
+  [data-slot="page-sidebar-trigger"] {
+  display: none;
+}
+
+/* Match sidebar surface to main content (playground demo) */
+[data-slot="sidebar-inner"],
+[data-slot="sidebar"][data-mobile="true"] {
+  background-color: var(--background);
+  color: var(--foreground);
+}

@@ -1,0 +1,85 @@
+{
+  "items": [
+    {
+      "name": "sidebar-playground",
+      "type": "registry:block",
+      "title": "Sidebar playground",
+      "description": "Interactive demo block: variant controls, peek layout, and animated shared sidebar trigger (Motion).",
+      "dependencies": ["motion"],
+      "registryDependencies": ["sidebar"],
+      "files": [
+        {
+          "path": "sidebar-playground/sidebar-playground.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/sidebar-playground.tsx"
+        },
+        {
+          "path": "sidebar-playground/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-playground/components/animated-sidebar-trigger.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/animated-sidebar-trigger.tsx"
+        },
+        {
+          "path": "sidebar-playground/index.ts",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/index.ts"
+        },
+        {
+          "path": "sidebar-playground/playground-config.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-config.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-header.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-header.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-controls.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-controls.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-active-config.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-active-config.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-body.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-body.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-shell.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-shell.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-main-inset.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-main-inset.tsx"
+        },
+        {
+          "path": "sidebar-playground/playground-main-standard.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-main-standard.tsx"
+        },
+        {
+          "path": "sidebar-playground/control-group.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/control-group.tsx"
+        },
+        {
+          "path": "sidebar-playground/sidebar-playground.css",
+          "type": "registry:file",
+          "target": "components/blocks/sidebar-playground/sidebar-playground.css"
+        }
+      ],
+      "docs": "Render `<SidebarPlaygroundDemo />` from your app root (or route). Import `sidebar-playground.css` in your global CSS. Install the `motion` package. Wire `@source` for `components/blocks/sidebar-playground` and `components/ui`."
+    }
+  ]
+}

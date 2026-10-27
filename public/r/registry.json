@@ -1,0 +1,152 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar",
+  "homepage": "https://github.com/Kaori2499/sidebar",
+  "items": [
+    {
+      "name": "sidebar",
+      "title": "Sidebar",
+      "description": "shadcn Base Nova sidebar with peek variant (transform-based edge hover) and full compound API.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/hooks/use-mobile.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-mobile.ts"
+        },
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        },
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/separator.tsx"
+        },
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        },
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/skeleton.tsx"
+        },
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tooltip.tsx"
+        },
+        {
+          "path": "registry/ui/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sidebar.tsx"
+        }
+      ],
+      "docs": "Import sidebar primitives from `@/components/ui/sidebar`. Requires Tailwind v4 and Base Nova theme tokens (`--sidebar-*` CSS variables). Add `@source` for `components/ui` so Tailwind emits utility classes used by the sidebar.",
+      "type": "registry:ui"
+    },
+    {
+      "name": "sidebar-playground",
+      "title": "Sidebar playground",
+      "description": "Interactive demo block: variant controls, peek layout, and animated shared sidebar trigger (Motion).",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "sidebar"
+      ],
+      "files": [
+        {
+          "path": "registry/blocks/sidebar-playground/sidebar-playground.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/sidebar-playground.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/app-sidebar.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/components/animated-sidebar-trigger.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/animated-sidebar-trigger.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/index.ts",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/index.ts"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-config.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-config.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-header.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-header.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-controls.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-controls.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-active-config.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-active-config.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-body.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-body.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-shell.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-shell.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-main-inset.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-main-inset.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/playground-main-standard.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/playground-main-standard.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/control-group.tsx",
+          "type": "registry:component",
+          "target": "components/blocks/sidebar-playground/control-group.tsx"
+        },
+        {
+          "path": "registry/blocks/sidebar-playground/sidebar-playground.css",
+          "type": "registry:file",
+          "target": "components/blocks/sidebar-playground/sidebar-playground.css"
+        }
+      ],
+      "docs": "Render `<SidebarPlaygroundDemo />` from your app root (or route). Import `sidebar-playground.css` in your global CSS. Install the `motion` package. Wire `@source` for `components/blocks/sidebar-playground` and `components/ui`.",
+      "type": "registry:block"
+    }
+  ]
+}

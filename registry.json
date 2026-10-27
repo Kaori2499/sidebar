@@ -1,0 +1,6 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar",
+  "homepage": "https://github.com/Kaori2499/sidebar",
+  "include": ["registry/ui/registry.json", "registry/blocks/registry.json"]
+}

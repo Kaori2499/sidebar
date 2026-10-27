@@ -1,0 +1,100 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sidebar-playground",
+  "title": "Sidebar playground",
+  "description": "Interactive demo block: variant controls, peek layout, and animated shared sidebar trigger (Motion).",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "sidebar"
+  ],
+  "files": [
+    {
+      "path": "registry/blocks/sidebar-playground/sidebar-playground.tsx",
+      "content": "import { Playground } from \"@/components/blocks/sidebar-playground\"\n\nexport function SidebarPlaygroundDemo() {\n  return (\n    <Playground.Provider>\n      <Playground.Shell>\n        <Playground.Header />\n        <Playground.Body>\n          <Playground.Controls />\n          <Playground.ActiveConfig />\n        </Playground.Body>\n      </Playground.Shell>\n    </Playground.Provider>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/sidebar-playground.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/components/app-sidebar.tsx",
+      "content": "import { Sidebar, SidebarHeader } from \"@/components/ui/sidebar\"\n\nimport { AnimatedSidebarTrigger } from \"@/components/blocks/sidebar-playground/animated-sidebar-trigger\"\nimport { usePlayground } from \"@/components/blocks/sidebar-playground/playground-config\"\n\nexport function AppSidebar() {\n  const { state } = usePlayground()\n  const { variant, collapsible } = state\n\n  return (\n    <Sidebar side=\"left\" variant={variant} collapsible={collapsible}>\n      <SidebarHeader className=\"h-14 shrink-0 flex-row items-center justify-end gap-0 p-0 px-4\">\n        <AnimatedSidebarTrigger data-testid=\"sidebar-trigger\" />\n      </SidebarHeader>\n    </Sidebar>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/app-sidebar.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/components/animated-sidebar-trigger.tsx",
+      "content": "import { SidebarTrigger } from \"@/components/ui/sidebar\"\nimport { motion, useReducedMotion } from \"motion/react\"\nimport type { ComponentProps } from \"react\"\n\nexport const PLAYGROUND_SIDEBAR_TRIGGER_LAYOUT_ID = \"playground-sidebar-trigger\"\n\nconst sharedLayoutTransition = {\n  type: \"tween\" as const,\n  duration: 0.2,\n  ease: [0.23, 1, 0.32, 1] as [number, number, number, number],\n}\n\ntype AnimatedSidebarTriggerProps = ComponentProps<typeof SidebarTrigger>\n\nexport function AnimatedSidebarTrigger(props: AnimatedSidebarTriggerProps) {\n  const reduceMotion = useReducedMotion()\n\n  return (\n    <motion.div\n      layoutId={PLAYGROUND_SIDEBAR_TRIGGER_LAYOUT_ID}\n      layout={!reduceMotion}\n      transition={reduceMotion ? { duration: 0 } : sharedLayoutTransition}\n      className=\"shrink-0\"\n    >\n      <SidebarTrigger {...props} />\n    </motion.div>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/animated-sidebar-trigger.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/index.ts",
+      "content": "import { PlaygroundActiveConfig } from \"./playground-active-config\"\nimport { PlaygroundBody } from \"./playground-body\"\nimport { PlaygroundControls } from \"./playground-controls\"\nimport { PlaygroundProvider } from \"./playground-config\"\nimport { PlaygroundHeader } from \"./playground-header\"\nimport { PlaygroundShell } from \"./playground-shell\"\n\nexport { usePlayground } from \"./playground-config\"\nexport type {\n  PlaygroundCollapsible,\n  PlaygroundVariant,\n} from \"./playground-config\"\n\nexport const Playground = {\n  Provider: PlaygroundProvider,\n  Shell: PlaygroundShell,\n  Header: PlaygroundHeader,\n  Body: PlaygroundBody,\n  Controls: PlaygroundControls,\n  ActiveConfig: PlaygroundActiveConfig,\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/index.ts"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-config.tsx",
+      "content": "import * as React from \"react\"\n\nexport type PlaygroundVariant = \"sidebar\" | \"floating\" | \"inset\" | \"peek\"\nexport type PlaygroundCollapsible = \"offcanvas\" | \"icon\" | \"none\"\n\nexport const playgroundVariants: PlaygroundVariant[] = [\n  \"sidebar\",\n  \"floating\",\n  \"inset\",\n  \"peek\",\n]\n\nexport const playgroundCollapsibles: PlaygroundCollapsible[] = [\n  \"offcanvas\",\n  \"icon\",\n  \"none\",\n]\n\ntype PlaygroundState = {\n  variant: PlaygroundVariant\n  collapsible: PlaygroundCollapsible\n}\n\ntype PlaygroundActions = {\n  setVariant: (variant: PlaygroundVariant) => void\n  setCollapsible: (collapsible: PlaygroundCollapsible) => void\n}\n\ntype PlaygroundMeta = {\n  providerKey: string\n}\n\ntype PlaygroundContextValue = {\n  state: PlaygroundState\n  actions: PlaygroundActions\n  meta: PlaygroundMeta\n}\n\nconst PlaygroundContext = React.createContext<PlaygroundContextValue | null>(\n  null,\n)\n\nexport function usePlayground() {\n  const context = React.useContext(PlaygroundContext)\n  if (!context) {\n    throw new Error(\"usePlayground must be used within Playground.Provider.\")\n  }\n  return context\n}\n\ntype PlaygroundProviderProps = {\n  children: React.ReactNode\n  defaultVariant?: PlaygroundVariant\n  defaultCollapsible?: PlaygroundCollapsible\n}\n\nexport function PlaygroundProvider({\n  children,\n  defaultVariant = \"peek\",\n  defaultCollapsible = \"offcanvas\",\n}: PlaygroundProviderProps) {\n  const [variant, setVariant] =\n    React.useState<PlaygroundVariant>(defaultVariant)\n  const [collapsible, setCollapsible] =\n    React.useState<PlaygroundCollapsible>(defaultCollapsible)\n\n  const providerKey = React.useMemo(\n    () => `${variant}-${collapsible}`,\n    [variant, collapsible],\n  )\n\n  const value = React.useMemo<PlaygroundContextValue>(\n    () => ({\n      state: { variant, collapsible },\n      actions: { setVariant, setCollapsible },\n      meta: { providerKey },\n    }),\n    [variant, collapsible, providerKey],\n  )\n\n  return (\n    <PlaygroundContext.Provider value={value}>\n      {children}\n    </PlaygroundContext.Provider>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-config.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-header.tsx",
+      "content": "import { useSidebar } from \"@/components/ui/sidebar\"\n\nimport { AnimatedSidebarTrigger } from \"@/components/blocks/sidebar-playground/animated-sidebar-trigger\"\n\nimport { usePlayground } from \"./playground-config\"\n\nexport function PlaygroundHeader() {\n  const { state } = usePlayground()\n  const { state: sidebarState, peekOpen } = useSidebar()\n  const showPageTrigger =\n    sidebarState === \"collapsed\" &&\n    !(state.variant === \"peek\" && peekOpen)\n\n  return (\n    <header className=\"relative flex h-14 shrink-0 items-center justify-start px-4\">\n      {showPageTrigger ? (\n        <AnimatedSidebarTrigger\n          data-slot=\"page-sidebar-trigger\"\n          data-testid=\"sidebar-trigger\"\n        />\n      ) : null}\n    </header>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-header.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-controls.tsx",
+      "content": "import { ControlGroup } from \"./control-group\"\nimport {\n  playgroundCollapsibles,\n  playgroundVariants,\n  usePlayground,\n} from \"./playground-config\"\n\nexport function PlaygroundControls() {\n  const { state, actions } = usePlayground()\n  const { variant, collapsible } = state\n  const { setVariant, setCollapsible } = actions\n\n  return (\n    <>\n      <section className=\"space-y-2\">\n        <h2 className=\"text-lg font-semibold tracking-tight\">Controls</h2>\n        <p className=\"text-sm text-muted-foreground\">\n          Tweak the sidebar props below. The provider remounts so each\n          combination applies cleanly.\n        </p>\n      </section>\n\n      <div\n        className={`grid gap-6 rounded-xl border bg-card p-4 text-card-foreground shadow-sm ${\n          variant === \"peek\" ? \"sm:grid-cols-1\" : \"sm:grid-cols-2\"\n        }`}\n      >\n        <ControlGroup\n          label=\"Variant\"\n          testId=\"control-variant\"\n          value={variant}\n          options={playgroundVariants}\n          onChange={setVariant}\n        />\n        {variant !== \"peek\" ? (\n          <ControlGroup\n            label=\"Collapsible\"\n            testId=\"control-collapsible\"\n            value={collapsible}\n            options={playgroundCollapsibles}\n            onChange={setCollapsible}\n          />\n        ) : null}\n      </div>\n    </>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-controls.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-active-config.tsx",
+      "content": "import { usePlayground } from \"./playground-config\"\n\nexport function PlaygroundActiveConfig() {\n  const { state } = usePlayground()\n  const { variant, collapsible } = state\n\n  return (\n    <section\n      className=\"rounded-xl border border-dashed p-4 text-sm text-muted-foreground\"\n      data-testid=\"active-config\"\n    >\n      Active:{\" \"}\n      <code className=\"rounded bg-muted px-1.5 py-0.5 text-foreground\">\n        variant={variant}\n      </code>{\" \"}\n      {variant !== \"peek\" ? (\n        <code className=\"rounded bg-muted px-1.5 py-0.5 text-foreground\">\n          collapsible={collapsible}\n        </code>\n      ) : null}\n    </section>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-active-config.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-body.tsx",
+      "content": "import type { ReactNode } from \"react\"\n\nexport function PlaygroundBody({ children }: { children: ReactNode }) {\n  return (\n    <div className=\"flex flex-1 flex-col gap-6 p-6\">{children}</div>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-body.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-shell.tsx",
+      "content": "import { LayoutGroup } from \"motion/react\"\nimport type { ReactNode } from \"react\"\n\nimport { SidebarProvider, TooltipProvider } from \"@/components/ui/sidebar\"\n\nimport { AppSidebar } from \"@/components/blocks/sidebar-playground/app-sidebar\"\n\nimport { usePlayground } from \"./playground-config\"\nimport { PlaygroundMainInset } from \"./playground-main-inset\"\nimport { PlaygroundMainStandard } from \"./playground-main-standard\"\n\nexport function PlaygroundShell({ children }: { children: ReactNode }) {\n  const { state, meta } = usePlayground()\n  const Main =\n    state.variant === \"inset\"\n      ? PlaygroundMainInset\n      : PlaygroundMainStandard\n\n  return (\n    <TooltipProvider>\n      <LayoutGroup id=\"playground-sidebar-trigger\">\n        <SidebarProvider key={meta.providerKey}>\n          <AppSidebar />\n          <Main>{children}</Main>\n        </SidebarProvider>\n      </LayoutGroup>\n    </TooltipProvider>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-shell.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-main-inset.tsx",
+      "content": "import type { ReactNode } from \"react\"\n\nimport { SidebarInset } from \"@/components/ui/sidebar\"\n\nexport function PlaygroundMainInset({ children }: { children: ReactNode }) {\n  return (\n    <SidebarInset data-testid=\"sidebar-inset\">\n      <div className=\"relative flex w-full flex-1 flex-col bg-background\">\n        {children}\n      </div>\n    </SidebarInset>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-main-inset.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/playground-main-standard.tsx",
+      "content": "import type { ReactNode } from \"react\"\n\nexport function PlaygroundMainStandard({ children }: { children: ReactNode }) {\n  return (\n    <main\n      className=\"relative flex w-full flex-1 flex-col bg-background\"\n      data-testid=\"sidebar-main\"\n    >\n      {children}\n    </main>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/playground-main-standard.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/control-group.tsx",
+      "content": "import { Button } from \"@/components/ui/button\"\n\ntype ControlGroupProps<T extends string> = {\n  label: string\n  testId: string\n  value: T\n  options: readonly T[]\n  onChange: (next: T) => void\n}\n\nexport function ControlGroup<T extends string>({\n  label,\n  testId,\n  value,\n  options,\n  onChange,\n}: ControlGroupProps<T>) {\n  return (\n    <fieldset className=\"space-y-2\" data-testid={testId}>\n      <legend className=\"text-sm font-medium text-foreground\">{label}</legend>\n      <div className=\"flex flex-wrap gap-2\">\n        {options.map((option) => (\n          <Button\n            key={option}\n            type=\"button\"\n            size=\"sm\"\n            variant={value === option ? \"default\" : \"outline\"}\n            data-testid={`${testId}-${option}`}\n            aria-pressed={value === option}\n            onClick={() => onChange(option)}\n          >\n            {option}\n          </Button>\n        ))}\n      </div>\n    </fieldset>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/blocks/sidebar-playground/control-group.tsx"
+    },
+    {
+      "path": "registry/blocks/sidebar-playground/sidebar-playground.css",
+      "content": "/* Peek variant: app header triggers replace the built-in expand control */\n[data-slot=\"sidebar\"][data-variant=\"peek\"] [data-slot=\"sidebar-expand\"] {\n  display: none;\n}\n\n/* Hide the page trigger as soon as peek opens */\n[data-slot=\"sidebar-wrapper\"]:has([data-slot=\"sidebar\"][data-peek=\"true\"])\n  [data-slot=\"page-sidebar-trigger\"] {\n  display: none;\n}\n\n/* Match sidebar surface to main content (playground demo) */\n[data-slot=\"sidebar-inner\"],\n[data-slot=\"sidebar\"][data-mobile=\"true\"] {\n  background-color: var(--background);\n  color: var(--foreground);\n}\n",
+      "type": "registry:file",
+      "target": "components/blocks/sidebar-playground/sidebar-playground.css"
+    }
+  ],
+  "docs": "Render `<SidebarPlaygroundDemo />` from your app root (or route). Import `sidebar-playground.css` in your global CSS. Install the `motion` package. Wire `@source` for `components/blocks/sidebar-playground` and `components/ui`.",
+  "type": "registry:block"
+}
